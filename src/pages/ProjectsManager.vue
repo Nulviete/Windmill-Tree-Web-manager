@@ -3,10 +3,12 @@
     <div class="row"><h5 style="padding: 0">Projects</h5>
     <q-btn round color="primary" icon="add" class="self-center q-mx-sm"  to="Projects/AddProject" />
     <p class="self-center" style="padding-left: 80px; padding-right: 20px">Filters:</p>
-    <q-select v-model="yearSel" :options="years" label="Year" style="width: 150px" class="q-pa-md self-center" >
+    <q-select v-model="yearSel" :options="years" label="Year" style="width: 180px" class="q-pa-md self-center" >
       <template v-if="yearSel" v-slot:append><q-icon name="cancel" @click.stop.prevent="yearSel =''" class="cursor-pointer" /></template>
     </q-select>
-    <q-select v-model="categorySel" :options="categories" label="Category" style="width: 150px" class="q-pa-md self-center" /></div>
+    <q-select v-model="categorySel" :options="categories" label="Category" style="width: 200px" class="q-pa-md self-center" >
+      <template v-if="categorySel" v-slot:append><q-icon name="cancel" @click.stop.prevent="categorySel =''" class="cursor-pointer" /></template>
+      </q-select></div>
 
 <!-- <q-list class="q-pa-xl">
   <q-item-label header>ALL PROJECTS</q-item-label>
@@ -36,8 +38,8 @@ const documents = ref(null)
 const filteredDocuments = ref(null)
 // const error = ref(null)
 const dataLoaded = ref(false)
-const years = ref(['-'])
-const categories = ref(['-'])
+const years = ref([])
+const categories = ref([])
 
 const yearSel = ref('')
 const categorySel = ref('')
@@ -62,10 +64,10 @@ const load = async () => {
   })
 
   const selectByYear = (rok, kategorie) => {
-    if ((rok === '-' || rok === '') && (kategorie === '-' || kategorie === '')) return documents.value
-    else if ((rok === '-' || rok === '') && (kategorie !== '-' || kategorie !== '')) {
+    if (rok === '' && kategorie === '') return documents.value
+    else if (rok === '' && kategorie !== '') {
       return documents.value.filter((doc) => doc.category === kategorie)
-    } else if ((rok !== '-' || rok !== '') && (kategorie === '-' || kategorie === '')) {
+    } else if (rok !== '' && kategorie === '') {
       return documents.value.filter((doc) => doc.year === rok)
     } else return documents.value.filter((doc) => doc.year === rok && doc.category === kategorie)
   }
