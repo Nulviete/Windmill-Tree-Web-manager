@@ -1,25 +1,23 @@
 <template>
   <q-page padding>
-    <q-input v-model="data[0].name"></q-input>
-    <p>{{ data[0].country}}</p>
+
+    <div v-if="dataLoaded">
+    <ModifyMemberTable :member="data" />
+    </div>
+    <div v-if="error">Chybicka</div>
 
   </q-page>
 </template>
 
 <script setup>
+import ModifyMemberTable from 'src/components/ModifyMemberTable.vue'
 import getMember from 'src/composables/getMember'
 
 const props = defineProps({
-  name: {
-    type: String,
-    default: ''
-  }
+  name: String
 })
 
 const { loadMember, data, dataLoaded, error } = getMember()
-const b = async () => await loadMember(props.name)
-b()
-
-console.log(data, error, dataLoaded)
+loadMember(props.name)
 
 </script>

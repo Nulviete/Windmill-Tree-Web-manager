@@ -4,16 +4,16 @@
     <div style="width: 700px" class="q-mx-auto">
 
       <q-form action="" @submit.prevent="handleSubmit" class="q-gutter-xs" >
-      <q-input filled v-model="newMember.name" label="Name" :dense="dense" required />
-      <q-select filled v-model="newMember.country" :options="countryOpts" label="Country" />
-    <q-select filled v-model="newMember.position" :options="positionOpts" label="Position" />
-    <q-input filled v-model="newMember.positionDescription" label="Description of position" :dense="dense" class="" required />
-    <div class="h3-text q-pt-md">Start of cooperation (Only for volunteers)</div>
-   <div class="row">
-    <q-select filled v-model="month" :options="monthSel" label="Month" class="col-2"></q-select>
-    <q-select filled v-model="year" :options="yearSel" label="Year" class="col-2"></q-select>
+        <q-input filled v-model="newMember.name" label="Name" :dense="dense" required />
+        <q-select filled v-model="newMember.country" :options="countryOpts" label="Country" />
+        <q-select filled v-model="newMember.position" :options="positionOpts" label="Position" />
+        <q-input filled v-model="newMember.positionDescription" label="Description of position" :dense="dense" class="" required />
+        <div class="h3-text q-pt-md">Start of cooperation (Only for volunteers)</div>
+          <div class="row">
+            <q-select filled v-model="month" :options="monthSel" label="Month" class="col-2"></q-select>
+            <q-select filled v-model="year" :options="yearSel" label="Year" class="col-2"></q-select>
 
-    </div>
+          </div>
 
     <q-btn class="glossy q-mt-md" color="teal" label="Add Membo" type="submit" />
     </q-form>
@@ -23,8 +23,13 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useQuasar } from 'quasar'
 
-// import { supabase } from 'src/config/supabaseClient'
+import { supabase } from 'src/config/supabaseClient'
+
+const router = useRouter()
+const $q = useQuasar()
 
 const datum = new Date()
 const curYear = datum.getFullYear()
@@ -65,30 +70,37 @@ const dense = ref(false)
 
 // testing
 
-function handleSubmit () {
-  if (newMember.value.country === null) return alert('country must be selected')
-  else {
-    newMember.value.dateSince = month.value + ' of \'' + (year.value - 2000)
-    newMember.value.country = newMember.value.country.value
-    console.log(newMember.value)
-  }
-}
+// function handleSubmit () {
+//   if (newMember.value.country === null) return alert('country must be selected')
+//   else {
+//     newMember.value.dateSince = month.value + ' of \'' + (year.value)
+//     newMember.value.country = newMember.value.country.value
+//     console.log(newMember.value)
+//     $q.notify('Member has been successfully modified')
+//     setTimeout(() => router.push({ path: '/Members' }), 1500)
+//   }
+// }
 
 // supabase insert
 
-// async function handleSubmit () {
-//   if (newMember.value.country === null) return alert('country must be selected')
-//   else {
-//     newMember.value.dateSince = date.formatDate(newMember.value.dateSince, 'MMMM \'YY')
-//     newMember.value.country = newMember.value.country.value
-//     console.log(newMember.value)
+async function handleSubmit () {
+  if (newMember.value.country === null) return alert('country must be selected')
+  else {
+    newMember.value.dateSince = month.value + ' of ' + (year.value)
+    newMember.value.country = newMember.value.country.value
+    console.log(newMember.value)
 
-//     const { data, error } = await supabase
-//       .from('members')
-//       .insert(newMember.value)
-//       .select()
-//     console.log(data, error)
-//   }
-// }
+    const { data, error } = await supabase
+      .from('members')
+      .insert(newMember.value)
+      .select()
+
+    if (data) {
+      $q.notify('Member has been successfully added')
+      setTimeout(() => router.push({ path: '/Members' }), 1500)
+    }
+    if (error) alert('error')
+  }
+}
 
 </script>

@@ -15,6 +15,9 @@
         <q-td key="position">
           {{ props.row.position }}
         </q-td>
+        <q-td key="country">
+          {{ props.row.country }}
+        </q-td>
         <q-td key="dateOfJoin">
           {{ props.row.dateSince }}
         </q-td>
@@ -60,6 +63,13 @@ const columns = [
     field: 'position',
     format: val => `${val}`,
     sortable: true
+  },
+  {
+    name: 'country',
+    label: 'Country',
+    align: 'left',
+    field: 'country'
+
   },
   {
     name: 'dateOfJoin',

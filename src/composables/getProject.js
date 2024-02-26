@@ -2,27 +2,27 @@
 import { supabase } from "src/config/supabaseClient";
 import { ref } from "vue";
 
-const getMember = () => {
+const getProject = () => {
   const data = ref(null);
   const dataLoaded = ref(false);
   const error = ref(null);
 
-  const loadMember = async (name) => {
+  const loadProject = async (name) => {
     try {
-      const { data: member } = await supabase
-        .from("members")
+      const { data: project } = await supabase
+        .from("projects")
         .select("*")
         .eq("name", name);
 
       if (error.value) console.log(error);
-      if (member) {
-        data.value = member[0];
+      if (project) {
+        data.value = project[0];
         dataLoaded.value = true;
       }
     } catch (err) {
       error.value = err.message;
     }
   };
-  return { loadMember, data, dataLoaded, error };
+  return { loadProject, data, dataLoaded, error };
 };
-export default getMember;
+export default getProject;

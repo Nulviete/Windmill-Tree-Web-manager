@@ -7,7 +7,7 @@
     <div v-if="dataLoaded"> <MembersTable :members=data />
     </div>
 
-    <div v-else>No data :/</div>
+    <div v-else> <q-spinner></q-spinner></div>
   </q-page>
 </template>
 
@@ -18,6 +18,8 @@ import MembersTable from 'src/components/MembersTable.vue'
 const { loadMembers, data, dataLoaded, error } = getMembers()
 loadMembers()
 
-console.log(data, error, dataLoaded)
+if (error.value !== null) {
+  console.log(error, 'error message')
+}
 
 </script>

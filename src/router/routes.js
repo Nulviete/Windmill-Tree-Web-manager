@@ -27,6 +27,12 @@ const routes = [
         props: true,
       },
       {
+        path: "Projects/:name",
+
+        component: () => import("pages/ModifyProject.vue"),
+        props: true,
+      },
+      {
         path: "Members/AddMember",
         name: "AddMember",
         component: () => import("pages/AddMember.vue"),
