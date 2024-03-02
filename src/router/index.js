@@ -1,7 +1,84 @@
 import { route } from 'quasar/wrappers'
 import { createRouter, createMemoryHistory, createWebHistory, createWebHashHistory } from 'vue-router'
-import routes from './routes'
 
+// route guard
+import { supabase } from 'src/config/supabaseClient'
+
+const requireAuth = async (to, from, next) => {
+  const user = await supabase.auth.getUser()
+  console.log(user)
+  if (!user.data.user) {
+    next({ name: 'Login' })
+  } else {
+    next()
+  }
+}
+
+const routes = [
+  {
+    path: '/',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Index',
+        component: () => import('pages/IndexPage.vue'),
+        beforeEnter: requireAuth
+      },
+      {
+        path: 'Login',
+        name: 'Login',
+        component: () => import('pages/LoginVue.vue')
+      },
+      {
+        path: 'Members',
+        name: 'Members',
+        component: () => import('pages/MembersManager.vue'),
+        beforeEnter: requireAuth
+      },
+      {
+        path: 'Projects',
+        name: 'Projects',
+        component: () => import('pages/ProjectsManager.vue'),
+        beforeEnter: requireAuth
+      },
+      {
+        path: 'Projects/AddProject',
+        name: 'AddProject',
+        component: () => import('pages/AddProject.vue'),
+        beforeEnter: requireAuth
+      },
+      {
+        path: 'Members/:name',
+
+        component: () => import('pages/ModifyMember.vue'),
+        props: true,
+        beforeEnter: requireAuth
+      },
+      {
+        path: 'Projects/:name',
+
+        component: () => import('pages/ModifyProject.vue'),
+        props: true,
+        beforeEnter: requireAuth
+      },
+      {
+        path: 'Members/AddMember',
+        name: 'AddMember',
+        component: () => import('pages/AddMember.vue'),
+        beforeEnter: requireAuth
+      }
+    ]
+  },
+
+  // Always leave this as last one,
+  // but you can also remove it
+  {
+    path: '/:catchAll(.*)*',
+    component: () => import('pages/ErrorNotFound.vue')
+  }
+
+]
 /*
  * If not building with SSR mode, you can
  * directly export the Router instantiation;

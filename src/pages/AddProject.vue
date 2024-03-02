@@ -1,23 +1,49 @@
 <template>
   <q-page padding >
+
+    <!-- Header -->
+
     <h2 class="q-mx-auto text-center">Add new projecto :-)</h2>
+
+    <!-- Form -->
+
     <div style="width: 700px" class="q-mx-auto">
       <q-form action="" @submit.prevent="handleSubmit" >
       <q-input filled v-model="objekt.name" label="Project name" :dense="dense" class="q-my-sm" required />
-    <q-select filled v-model="objekt.category" :options="categoryOpts" label="Category"  />
-    <q-input filled v-model="objekt.year" label="Year" :dense="dense" class="q-my-sm q-mb-xl" required />
-    <div class="q-pt-sm text-h4">Gallery Slide show</div>
+      <q-select filled v-model="objekt.category" :options="categoryOpts" label="Category"  />
+      <q-input filled v-model="objekt.year" label="Year" :dense="dense" class="q-my-sm q-mb-xl" required />
 
-    <div v-for="(item, idx) in 15" :key="idx" class="row q-col-gutter-lg q-py-xs">
-      <q-input v-model="objekt.photos[idx]" :label="'Photo '+(idx+1)" class="col-9"></q-input>
-      <div class="row justify-center col-3">
-        <img :src="objekt.photos[idx]" alt="" class="obrazek" v-if="objekt.photos[idx]"  />
-        <p v-else>(Image)</p>
+    <!-- Main photo -->
+
+    <div class="q-pt-sm text-h4">Main photo</div>
+
+    <div class="row q-col-gutter-lg q-py-xs">
+      <q-input v-model="objekt.photoUrl" label="Main photo" class="col-9"></q-input>
+        <div class="row justify-center col-3">
+          <img :src="objekt.photoUrl" alt="" class="obrazek" v-if="objekt.photoUrl"  />
+          <p v-else>(Image)</p>
         </div>
-
     </div>
 
-    <q-btn class="glossy q-mt-md" color="teal" label="Add Project" type="submit" />
+    <!-- Gallery slide show -->
+
+    <div class="q-pt-sm text-h4">Gallery slide show</div>
+
+    <div>
+      <q-input type="textarea" label="Here copy direct links from Imgur.com" v-model="links"
+      ></q-input>
+    </div>
+
+    <!-- Buttons -->
+
+    <div class="row justify-start ">
+      <q-btn label="Add Photo" @click="objekt.photos.length++" class="q-mt-md bg-blue-2 text-black"></q-btn>
+    </div>
+
+    <div class="row justify-center ">
+      <q-btn class="glossy q-mt-md" color="teal" label="Add Project" type="submit" />
+    </div>
+
     </q-form>
     </div>
 
@@ -25,10 +51,20 @@
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router'
+import { computed, ref } from 'vue'
+import { useQuasar } from 'quasar'
 
-import { ref, watchEffect } from 'vue'
+const $q = useQuasar()
+const router = useRouter()
 
 const dense = ref(false)
+
+const links = ref('')
+
+const formatedLinks = computed(() => {
+  return links.value.split(/\r?\n|\r|\n/g)
+})
 
 const categoryOpts = ref([
   'international',
@@ -39,24 +75,27 @@ const objekt = ref({
   name: '',
   category: null,
   year: null,
-  photos: []
+  photos: formatedLinks,
+  photoUrl: null
 })
 
-watchEffect(() => {
-  console.log(objekt.value.photos)
-  console.log(objekt.value.photos[0])
-})
+objekt.value.photos.length = 15
 
 /* supabase insert */
 
 import { supabase } from 'src/config/supabaseClient'
+
 async function handleSubmit () {
   const { data, error } = await supabase
     .from('projects')
     .insert(objekt.value)
     .select()
 
-  console.log(data, error)
+  if (data) {
+    $q.notify('Project has been successfully added')
+    setTimeout(() => router.push({ path: '/Projects' }), 1500)
+  }
+  if (error) console.log(error)
 }
 
 /* testing in console */

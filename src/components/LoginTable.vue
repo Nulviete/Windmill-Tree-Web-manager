@@ -8,18 +8,19 @@
     </div>
 
   </q-form>
-  <q-btn label="get user" class="q-mt-md" type="" @click="getUser"></q-btn>
-  <p> data: <br> {{ data }}</p>
-      <p>user: <br> {{ user }}</p>
+
 </template>
 
 <script setup>
 import { supabase } from 'src/config/supabaseClient'
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 const login = ref('')
 const pass = ref('')
 const user = ref(null)
+
+const router = useRouter()
 
 async function handleSubmit () {
   const { data, error } = await supabase.auth.signInWithPassword({
@@ -31,19 +32,12 @@ async function handleSubmit () {
     login.value = ''
     pass.value = ''
     user.value = data
+    router.push({ name: 'Index' })
   }
   if (error) {
     console.log(error)
     login.value = ''
     pass.value = ''
-  }
-}
-
-async function getUser () {
-  const { data: { user } } = await supabase.auth.getUser()
-  if (user) {
-    user.value = user
-    console.log(user.value)
   }
 }
 

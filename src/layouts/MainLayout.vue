@@ -11,13 +11,19 @@
         </q-toolbar-title>
       </q-toolbar>
 
+<div class="row justify-between">
       <q-tabs align="left">
         <q-route-tab to="/Members" label="Members" />
         <q-route-tab to="/Projects" label="Projects" />
-        <q-route-tab label="Logout" @click="Logout" />
 
       </q-tabs>
-      <p v-if="curUser"> {{ curUser.email }}</p>
+      <q-tabs align="right">
+<p v-if="curUser" class="q-pl-md q-pr-md" style="margin: 0px">  {{ curUser.email }}</p>
+        <q-route-tab v-if="curUser"  @click="Logout" class="row flex" >
+          <q-icon name="mdi-logout"></q-icon> Logout
+        </q-route-tab>
+      </q-tabs>
+      </div>
 
     </q-header>
 
@@ -31,14 +37,16 @@
 <script setup>
 import { supabase } from 'src/config/supabaseClient'
 import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 const curUser = ref([])
+const router = useRouter()
 
 onMounted(() => {
-  logIN()
+  useGetUser()
 })
 
-const logIN = async () => {
+const useGetUser = async () => {
   const { data: { user } } = await supabase.auth.getUser()
   curUser.value = user
 }
@@ -49,10 +57,10 @@ const { data } = supabase.auth.onAuthStateChange((event, session) => {
   if (event === 'INITIAL_SESSION') {
     // handle initial session
   } else if (event === 'SIGNED_IN') {
-    logIN()
+    useGetUser()
   } else if (event === 'SIGNED_OUT') {
     console.log(data)
-    curUser.value = []
+    curUser.value = null
   } else if (event === 'PASSWORD_RECOVERY') {
     // handle password recovery event
   } else if (event === 'TOKEN_REFRESHED') {
@@ -65,6 +73,7 @@ const { data } = supabase.auth.onAuthStateChange((event, session) => {
 async function Logout () {
   console.log('logout')
   const { error } = await supabase.auth.signOut()
+  router.push({ name: 'Login' })
   if (!error) console.log('Logout success')
 }
 

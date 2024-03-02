@@ -42,10 +42,31 @@
          <q-td key="edit" >
           <q-icon name="mdi-pencil" size="sm" @click="handleClick(filteredDocuments.row.name)" class="edit" />
         </q-td>
+         <q-td key="delete" >
+          <q-icon name="mdi-delete" size="sm" @click="
+          whatToDelete = filteredDocuments.row.id;
+          confirm = true;
+
+          " class="edit" />
+        </q-td>
       </q-tr>
     </template>
      </q-table>
     </div>
+
+    <q-dialog v-model="confirm" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <q-avatar icon="signal_wifi_off" color="primary" text-color="white" />
+          <span class="q-ml-sm">Are you sure you want to delete the project?</span>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="Cancel" color="primary" v-close-popup />
+          <q-btn flat label="Delete" color="primary" @click="handleClickDelete(whatToDelete)" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
 
   </q-page>
 </template>
@@ -54,6 +75,8 @@
 import { ref, watchEffect } from 'vue'
 import { supabase } from 'src/config/supabaseClient'
 import { useRouter } from 'vue-router'
+
+const whatToDelete = ref(null)
 
 const router = useRouter()
 const documents = ref(null)
@@ -100,7 +123,6 @@ const load = async () => {
 }
 
 load()
-console.log(filteredDocuments)
 
 const columns = [
   {
@@ -131,8 +153,14 @@ const columns = [
   {
     name: 'edit',
     label: 'Edit',
-    align: 'left',
-    field: 'dateTill'
+    align: 'left'
+
+  },
+  {
+    name: 'delete',
+    label: 'Delete',
+    align: 'left'
+
   }
 ]
 
@@ -140,6 +168,18 @@ const rows = filteredDocuments
 
 const handleClick = (a) => {
   router.push({ path: '/Projects/' + a })
+}
+
+const confirm = ref(false)
+
+const handleClickDelete = async (a) => {
+  const { error } = await supabase
+    .from('projects')
+    .delete()
+    .eq('id', a)
+
+  if (error) console.log(error)
+  else router.go()
 }
 
 // console.log(years.value)
