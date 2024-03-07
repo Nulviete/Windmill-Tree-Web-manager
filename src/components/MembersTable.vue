@@ -25,7 +25,10 @@
           {{ props.row.dateTill }}
         </q-td>
         <q-td key="edit" >
-          <q-icon v-if="props.row.position==='Volunteer' || props.row.position==='Root Member'" name="mdi-pencil" size="sm" @click="handleClick(props.row.name)"  />
+          <q-icon v-if="props.row.position==='Volunteer' || props.row.position==='Root Member'" name="mdi-pencil" size="sm" @click="
+
+          handleClick(props.row.id);
+          "  />
         </q-td>
       </q-tr>
     </template>
@@ -93,8 +96,8 @@ const columns = [
 
 const rows = props.members
 
-const handleClick = (a) => {
-  router.push({ path: '/Members/' + a })
+const handleClick = (id) => {
+  router.push({ path: '/Members/' + id })
 }
 
 </script>

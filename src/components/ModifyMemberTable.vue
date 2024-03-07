@@ -49,11 +49,16 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
-import { supabase } from 'src/config/supabaseClient'
+import useMember from 'src/composables/useMember'
 
 const props = defineProps({
-  member: Object
+  member: {
+    type: Object,
+    default: null
+  }
 })
+
+console.log(props)
 
 const $q = useQuasar()
 const router = useRouter()
@@ -112,32 +117,7 @@ for (let i = curYear - 5; i < curYear + 5; i++) {
   yearSel.value.push(i)
 }
 
-// console.log tryout
-
-// function handleSubmit () {
-//   // country set
-//   member.value.country = member.value.country.value
-
-//   // date of start set
-//   if (valSOC.value) {
-//     member.value.dateSince = monthS.value + ' of ' + (yearS.value)
-//   }
-
-//   // date of end set
-//   if (valEOC.value) {
-//     member.value.dateTill = monthE.value + ' of ' + (yearE.value)
-//   }
-//   if (curWorking.value) member.value.dateTill = 'now'
-
-//   //  push the data
-//   console.log(member.value)
-
-//   // notify pop up message
-//   $q.notify('Member has been successfully modified')
-
-//   // redirect to Member page
-//   setTimeout(() => router.push({ path: '/Members' }), 1500)
-// }
+const { updateMember, errorMess } = useMember()
 
 // supabase
 async function handleSubmit () {
@@ -157,28 +137,16 @@ async function handleSubmit () {
 
   //  push the data
 
-  const { data, error } = await supabase
-    .from('members')
-    .update({
-      name: member.value.name,
-      country: member.value.country,
-      position: member.value.position,
-      positionDescription: member.value.positionDescription,
-      dateSince: member.value.dateSince,
-      dateTill: member.value.dateTill
+  updateMember(props.member.id, member.value.name, member.value.country, member.value.position, member.value.position, member.value.positionDescription, member.value.dateSince, member.value.dateTill)
 
-    })
-    .eq('name', props.member.name)
-    .select()
+  if (errorMess.value) alert(errorMess.value)
+  else {
+    // notify pop up message
+    $q.notify('Member has been successfully modified')
 
-  if (error) console.log(error)
-  if (data) console.log(data)
-
-  // notify pop up message
-  $q.notify('Member has been successfully modified')
-
-  // redirect to Member page
-  setTimeout(() => router.push({ path: '/Members' }), 1500)
+    // redirect to Member page
+    setTimeout(() => router.push({ path: '/Members' }), 1500)
+  }
 }
 
 </script>

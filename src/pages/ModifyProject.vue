@@ -11,16 +11,16 @@
 </template>
 
 <script setup>
-import getProject from 'src/composables/getProject'
+import useProject from 'src/composables/useProject'
 import ModifyProjectTable from 'src/components/ModifyProjectTable.vue'
 
 const props = defineProps({
   name: String
 })
 
-const { loadProject, data, dataLoaded, error } = getProject()
+const { loadProject, data, dataLoaded, errorMess } = useProject()
 loadProject(props.name)
 
-if (error) console.log(error)
+if (errorMess.value) console.log(errorMess.value)
 
 </script>

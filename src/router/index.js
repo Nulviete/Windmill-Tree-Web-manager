@@ -6,7 +6,7 @@ import { supabase } from 'src/config/supabaseClient'
 
 const requireAuth = async (to, from, next) => {
   const user = await supabase.auth.getUser()
-  console.log(user)
+
   if (!user.data.user) {
     next({ name: 'Login' })
   } else {
@@ -49,7 +49,7 @@ const routes = [
         beforeEnter: requireAuth
       },
       {
-        path: 'Members/:name',
+        path: 'Members/:id',
 
         component: () => import('pages/ModifyMember.vue'),
         props: true,
@@ -67,6 +67,12 @@ const routes = [
         name: 'AddMember',
         component: () => import('pages/AddMember.vue'),
         beforeEnter: requireAuth
+      },
+      {
+        path: 'Test',
+        name: 'Test',
+        component: () => import('src/pages/test/TestPage.vue')
+
       }
     ]
   },

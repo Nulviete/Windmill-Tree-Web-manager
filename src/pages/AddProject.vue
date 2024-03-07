@@ -83,19 +83,18 @@ objekt.value.photos.length = 15
 
 /* supabase insert */
 
-import { supabase } from 'src/config/supabaseClient'
+import useProject from 'src/composables/useProject'
+
+const { addProject, data, errorMess } = useProject()
 
 async function handleSubmit () {
-  const { data, error } = await supabase
-    .from('projects')
-    .insert(objekt.value)
-    .select()
+  await addProject(objekt.value)
 
-  if (data) {
+  if (data.value) {
     $q.notify('Project has been successfully added')
     setTimeout(() => router.push({ path: '/Projects' }), 1500)
   }
-  if (error) console.log(error)
+  if (errorMess.value) alert(errorMess.value)
 }
 
 /* testing in console */
