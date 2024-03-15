@@ -9,9 +9,10 @@
 
     <div style="width: 700px" class="q-mx-auto">
       <q-form action="" @submit.prevent="handleSubmit" >
-      <q-input filled v-model="objekt.name" label="Project name" :dense="dense" class="q-my-sm" required />
-      <q-select filled v-model="objekt.category" :options="categoryOpts" label="Category"  />
-      <q-input filled v-model="objekt.year" label="Year" :dense="dense" class="q-my-sm q-mb-xl" required />
+      <q-input filled v-model="objekt.name" label="Project name"  class="q-my-sm" required />
+      <q-select filled v-model="objekt.category" :options="categoryOpts" label="Category" class="q-pb-sm"  />
+      <q-input filled v-model="objekt.year" label="Year"   required />
+      <q-input filled v-model="objekt.countries" label="Participants countries"  class="q-my-sm q-mb-xl"></q-input>
 
     <!-- Main photo -->
 
@@ -58,8 +59,6 @@ import { useQuasar } from 'quasar'
 const $q = useQuasar()
 const router = useRouter()
 
-const dense = ref(false)
-
 const links = ref('')
 
 const formatedLinks = computed(() => {
@@ -68,7 +67,8 @@ const formatedLinks = computed(() => {
 
 const categoryOpts = ref([
   'international',
-  'forUkraine'
+  'forUkraine',
+  'LOCAL'
 ])
 
 const objekt = ref({
@@ -76,7 +76,8 @@ const objekt = ref({
   category: null,
   year: null,
   photos: formatedLinks,
-  photoUrl: null
+  photoUrl: null,
+  countries: ''
 })
 
 objekt.value.photos.length = 15

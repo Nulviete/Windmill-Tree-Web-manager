@@ -47,6 +47,32 @@ if (member)
   data.value = member
 }
 
-  return { loadMember, updateMember, data, dataLoaded, errorMess };
+const addMember = async (newMember) => {
+  const { data: member, error } = await supabase
+       .from('members')
+       .insert(newMember)
+       .select()
+
+       if (member) {
+          data.value = member
+       }
+       if (error) {
+        errorMess.value = error
+       }
+}
+
+const deleteMember = async (id) => {
+  const { error } = await supabase
+  .from('members')
+  .delete()
+  .eq('id', id)
+
+  if (error) {
+    errorMess.value = error
+  }
+
+}
+
+  return { loadMember, addMember, updateMember, deleteMember, data, dataLoaded, errorMess };
 };
 export default useMember;

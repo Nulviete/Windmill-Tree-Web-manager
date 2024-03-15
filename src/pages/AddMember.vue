@@ -25,8 +25,9 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
+import useMember from 'src/composables/useMember'
 
-import { supabase } from 'src/config/supabaseClient'
+// import { supabase } from 'src/config/supabaseClient'
 
 const router = useRouter()
 const $q = useQuasar()
@@ -42,6 +43,8 @@ for (let i = curYear - 5; i < curYear + 5; i++) {
   yearSel.value.push(i)
 }
 
+const { addMember, data, errorMess } = useMember()
+
 const month = ref(monthSel[curMonth])
 
 const countryOpts = ref([
@@ -53,15 +56,15 @@ const countryOpts = ref([
   { label: 'Morocco', value: 'mo' }
 ])
 const positionOpts = ref([
-  { label: 'Root Member' },
-  { label: 'Volunteer' }
+  { label: 'Root Member', value: 'Root Member' },
+  { label: 'Volunteer', value: 'Volunteer' }
 ])
 
 const newMember = ref({
   name: ref(''),
   country: ref(null),
   dateSince: ref(''),
-  position: ref('Volunteer'),
+  position: ref(null),
   positionDescription: ref('')
 
 })
@@ -88,18 +91,31 @@ async function handleSubmit () {
   else {
     newMember.value.dateSince = month.value + ' of ' + (year.value)
     newMember.value.country = newMember.value.country.value
+    newMember.value.position = newMember.value.position.value
     console.log(newMember.value)
 
-    const { data, error } = await supabase
-      .from('members')
-      .insert(newMember.value)
-      .select()
+    $q.notify('Member has been successfully added')
+    setTimeout(() => router.push({ path: '/Members' }), 1500)
 
-    if (data) {
+    addMember(newMember.value)
+
+    if (data.value) {
       $q.notify('Member has been successfully added')
       setTimeout(() => router.push({ path: '/Members' }), 1500)
     }
-    if (error) alert('error')
+    if (errorMess.value) {
+      alert(errorMess.value)
+    }
+    // const { data, error } = await supabase
+    //   .from('members')
+    //   .insert(newMember.value)
+    //   .select()
+
+    // if (data) {
+    //   $q.notify('Member has been successfully added')
+    //   setTimeout(() => router.push({ path: '/Members' }), 1500)
+    // }
+    // if (error) alert('error')
   }
 }
 
